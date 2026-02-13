@@ -1,0 +1,35 @@
+---
+description: z21 landing page direction and constraints
+globs:
+  - index.html
+alwaysApply: false
+---
+
+# z21 landing page rule
+
+Build and maintain this page as a single-screen signal, not a marketing site.
+
+## Stack
+
+- Use plain HTML, CSS, and vanilla JavaScript only.
+- Avoid frameworks, build tools, and unnecessary dependencies.
+- Keep implementation deployable as static files on GitHub Pages.
+
+## Visual direction
+
+- Keep the scene dark-first with near-black background (`#0B0D12`).
+- Keep the primary mark bold, centered, and dominant.
+- Use chromatic aberration accents with cyan (`#00A0FF`) and pink (`#FF2070`) subtly.
+- Keep motion controlled: ambient background shifts, no chaotic animation.
+
+## Content constraints
+
+- Include only the core mark, a short subheading, and optional micro-detail.
+- Do not add navigation, footer links, buttons, forms, social icons, or long marketing copy.
+- Prioritize mystery and intent over explanation.
+
+## Typography
+
+- Prefer a modern grotesk style with strong headline weight and tight tracking.
+- Keep subheading light and slightly letter-spaced.
+- Avoid decorative or novelty fonts.

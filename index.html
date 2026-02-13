@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>z21</title>
+    <meta name="description" content="z21 — Zero to one." />
+    <meta property="og:title" content="z21" />
+    <meta property="og:description" content="Zero to one." />
+    <meta property="og:image" content="assets/logo.png" />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/png" href="assets/logo.png" />
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+      crossorigin="anonymous"
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #07090d;
+        --fg: #ffffff;
+        --muted: #bfc7cf;
+        --micro: #5a6068;
+        --cyan: #00a0ff;
+        --pink: #ff2070;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+
+      html {
+        position: relative;
+        background: var(--bg);
+      }
+
+      html::before {
+        content: "";
+        position: fixed;
+        inset: -1% -1%;
+        pointer-events: none;
+        background:
+          linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0) 48%,
+            rgba(0, 160, 255, 0.12) 50%,
+            rgba(255, 32, 112, 0.11) 52%,
+            rgba(255, 255, 255, 0) 54%,
+            rgba(255, 255, 255, 0) 100%
+          );
+        mix-blend-mode: screen;
+        opacity: 0.24;
+        animation: glitchBand 7.2s linear infinite;
+        z-index: 0;
+      }
+
+      html::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(
+          ellipse at center,
+          rgba(0, 0, 0, 0) 42%,
+          rgba(0, 0, 0, 0.22) 74%,
+          rgba(0, 0, 0, 0.5) 100%
+        );
+        z-index: 0;
+      }
+
+      body {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 30% 20%, rgba(0, 160, 255, 0.035), rgba(0, 0, 0, 0) 42%),
+          radial-gradient(circle at 70% 80%, rgba(255, 32, 112, 0.03), rgba(0, 0, 0, 0) 46%),
+          linear-gradient(to bottom, rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.24)),
+          var(--bg);
+        color: var(--fg);
+        font-family: "Space Grotesk", "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+      }
+
+      body::before,
+      body::after {
+        content: "";
+        position: absolute;
+        inset: -2% -2%;
+        pointer-events: none;
+      }
+
+      body::before {
+        background-image: repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.085) 0px,
+          rgba(255, 255, 255, 0.085) 1px,
+          rgba(0, 0, 0, 0) 1px,
+          rgba(0, 0, 0, 0) 3px
+        );
+        mix-blend-mode: screen;
+        opacity: 0.44;
+        animation: scanDrift 7.8s linear infinite;
+      }
+
+      body::after {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='0.85'/%3E%3C/svg%3E");
+        background-size: 140px 140px;
+        mix-blend-mode: screen;
+        opacity: 0.105;
+        animation: noiseDrift 5.8s steps(10, end) infinite;
+      }
+
+      .shell {
+        position: relative;
+        z-index: 1;
+        width: min(92vw, 1400px);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .logo {
+        margin: 0;
+        line-height: 0.82;
+        font-size: clamp(9rem, 38vh, 22rem);
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        color: var(--fg);
+        -webkit-text-stroke: 1.2px rgba(255, 255, 255, 0.92);
+        text-transform: lowercase;
+        transform: skewX(-8deg);
+        text-shadow:
+          -6px 0 var(--cyan),
+          6px 0 var(--pink);
+        animation: logoBoot 0.2s steps(2, jump-none) 1 both;
+      }
+
+      .subheading {
+        margin: 2rem 0 0;
+        font-size: clamp(0.75rem, 1.2vw, 1rem);
+        font-weight: 300;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: var(--muted);
+        opacity: 0;
+        text-shadow:
+          -0.5px 0 rgba(0, 160, 255, 0.22),
+          0.5px 0 rgba(255, 32, 112, 0.22);
+        animation: subReveal 0.6s ease-out 1s forwards;
+      }
+
+      .micro {
+        position: absolute;
+        bottom: 2rem;
+        margin: 0;
+        font-size: 0.6875rem;
+        font-weight: 300;
+        letter-spacing: 0.12em;
+        text-transform: lowercase;
+        color: var(--micro);
+        opacity: 0;
+        animation: microReveal 0.6s ease-out 2s forwards;
+      }
+
+      @keyframes logoBoot {
+        0% {
+          text-shadow:
+            -12px 0 var(--cyan),
+            12px 0 var(--pink);
+        }
+        55% {
+          text-shadow:
+            -4px 0 var(--pink),
+            4px 0 var(--cyan);
+        }
+        100% {
+          text-shadow:
+            -6px 0 var(--cyan),
+            6px 0 var(--pink);
+        }
+      }
+
+      @keyframes subReveal {
+        0% {
+          opacity: 0;
+          transform: translateY(4px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes microReveal {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      @keyframes ambientShift {
+        0% {
+          transform: translate3d(0, 0, 0);
+        }
+        50% {
+          transform: translate3d(0.4%, -0.3%, 0);
+        }
+        100% {
+          transform: translate3d(-0.5%, 0.35%, 0);
+        }
+      }
+
+      @keyframes scanDrift {
+        0% {
+          transform: translate3d(0, 0, 0);
+          background-position: 0 0;
+        }
+        48% {
+          transform: translate3d(0.3%, -0.25%, 0);
+          background-position: 0 10px;
+        }
+        50% {
+          transform: translate3d(-0.35%, 0.2%, 0);
+          background-position: 0 11px;
+        }
+        100% {
+          transform: translate3d(0.25%, -0.2%, 0);
+          background-position: 0 22px;
+        }
+      }
+
+      @keyframes noiseDrift {
+        0% {
+          transform: translate3d(0, 0, 0);
+          background-position: 0 0;
+        }
+        100% {
+          transform: translate3d(-0.7%, 0.45%, 0);
+          background-position: 35px -28px;
+        }
+      }
+
+      @keyframes glitchBand {
+        0% {
+          transform: translateY(-110%);
+          opacity: 0.06;
+        }
+        12% {
+          opacity: 0.27;
+        }
+        18% {
+          opacity: 0.11;
+        }
+        38% {
+          transform: translateY(-18%);
+          opacity: 0.31;
+        }
+        56% {
+          opacity: 0.09;
+        }
+        100% {
+          transform: translateY(108%);
+          opacity: 0.06;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        body::before,
+        body::after,
+        .logo,
+        .subheading,
+        .micro {
+          animation: none !important;
+        }
+
+        .subheading,
+        .micro {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell" aria-label="z21 coming soon landing page">
+      <h1 class="logo" aria-label="z21">z21</h1>
+      <p class="subheading">Zero to one.</p>
+      <small class="micro">z21 -- from zero to one</small>
+    </main>
+    <script>
+      // Replay the short glitch burst every few seconds.
+      window.addEventListener("load", () => {
+        const logo = document.querySelector(".logo");
+        if (!logo) return;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        const replayLogoGlitch = () => {
+          logo.style.animation = "none";
+          void logo.offsetWidth;
+          logo.style.animation = "logoBoot 0.2s steps(2, jump-none) 1 both";
+        };
+
+        const scheduleNextGlitch = () => {
+          const nextDelayMs = 2000 + Math.random() * 3000;
+          window.setTimeout(() => {
+            replayLogoGlitch();
+            scheduleNextGlitch();
+          }, nextDelayMs);
+        };
+
+        scheduleNextGlitch();
+      });
+    </script>
+  </body>
+</html>
