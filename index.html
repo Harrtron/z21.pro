@@ -17,7 +17,7 @@
     />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@1,900&family=Space+Grotesk:wght@300&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -139,17 +139,18 @@
       .logo {
         margin: 0;
         line-height: 0.82;
+        font-family: "Archivo", "Arial Black", sans-serif;
         font-size: clamp(9rem, 38vh, 22rem);
         font-weight: 900;
+        font-style: italic;
         letter-spacing: -0.03em;
         color: var(--fg);
         -webkit-text-stroke: 1.2px rgba(255, 255, 255, 0.92);
         text-transform: lowercase;
-        transform: skewX(-8deg);
         text-shadow:
           -6px 0 var(--cyan),
           6px 0 var(--pink);
-        animation: logoBoot 0.2s steps(2, jump-none) 1 both;
+        animation: logoBoot 0.35s steps(4, jump-none) 1 both;
       }
 
       .subheading {
@@ -182,18 +183,45 @@
       @keyframes logoBoot {
         0% {
           text-shadow:
-            -12px 0 var(--cyan),
-            12px 0 var(--pink);
+            -24px 0 var(--cyan),
+            24px 0 var(--pink);
+          transform: translate3d(0, 0, 0);
+          opacity: 1;
         }
-        55% {
+        15% {
           text-shadow:
-            -4px 0 var(--pink),
-            4px 0 var(--cyan);
+            18px 2px var(--pink),
+            -18px -2px var(--cyan);
+          transform: translate3d(-4px, 1px, 0);
+          opacity: 0.82;
+        }
+        30% {
+          text-shadow:
+            -14px -1px var(--cyan),
+            14px 1px var(--pink);
+          transform: translate3d(3px, -1px, 0);
+          opacity: 0.94;
+        }
+        50% {
+          text-shadow:
+            8px 0 var(--pink),
+            -8px 0 var(--cyan);
+          transform: translate3d(-2px, 0, 0);
+          opacity: 0.7;
+        }
+        70% {
+          text-shadow:
+            -10px 1px var(--cyan),
+            10px -1px var(--pink);
+          transform: translate3d(1px, 0, 0);
+          opacity: 1;
         }
         100% {
           text-shadow:
             -6px 0 var(--cyan),
             6px 0 var(--pink);
+          transform: translate3d(0, 0, 0);
+          opacity: 1;
         }
       }
 
@@ -309,7 +337,6 @@
           text-shadow:
             -4px 0 var(--cyan),
             4px 0 var(--pink);
-          transform: skewX(-6deg);
         }
       }
     </style>
@@ -330,11 +357,11 @@
         const replayLogoGlitch = () => {
           logo.style.animation = "none";
           void logo.offsetWidth;
-          logo.style.animation = "logoBoot 0.2s steps(2, jump-none) 1 both";
+          logo.style.animation = "logoBoot 0.35s steps(4, jump-none) 1 both";
         };
 
         const scheduleNextGlitch = () => {
-          const nextDelayMs = 2000 + Math.random() * 3000;
+          const nextDelayMs = 3000 + Math.random() * 5000;
           window.setTimeout(() => {
             replayLogoGlitch();
             scheduleNextGlitch();
