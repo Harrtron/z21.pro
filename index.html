@@ -3,9 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>z21</title>
+    <title>z21 -- from zero to one
+    </title>
     <meta name="description" content="z21 — Zero to one." />
-    <meta property="og:title" content="z21" />
+    <meta property="og:title" content="z21 -- from zero to one
+    " />
     <meta property="og:description" content="Zero to one." />
     <meta property="og:image" content="assets/z21-logo-square.png" />
     <meta property="og:type" content="website" />
@@ -174,6 +176,13 @@
         justify-content: center;
       }
 
+      .core-copy {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transform: translateY(-4vh);
+      }
+
       .logo {
         margin: 0;
         line-height: 0.82;
@@ -207,7 +216,7 @@
 
       .micro {
         position: absolute;
-        bottom: 2rem;
+        bottom: 1.2rem;
         margin: 0;
         font-size: 0.6875rem;
         font-weight: 300;
@@ -216,6 +225,43 @@
         color: var(--micro);
         opacity: 0;
         animation: microReveal 0.6s ease-out 2s forwards;
+      }
+
+      .manifest {
+        position: absolute;
+        bottom: 7.2rem;
+        margin: 0;
+        width: min(82vw, 480px);
+        text-align: center;
+        font-size: 0.73rem;
+        font-weight: 300;
+        letter-spacing: 0.09em;
+        text-transform: lowercase;
+        line-height: 1.5;
+        color: var(--micro);
+        opacity: 0;
+        animation: manifestReveal 0.6s ease-out 1.6s forwards;
+      }
+
+      .manifest p {
+        margin: 0;
+      }
+
+      .manifest p + p {
+        margin-top: 0.5rem;
+      }
+
+      .manifest a {
+        color: var(--muted);
+        cursor: pointer;
+        text-decoration: none;
+        text-underline-offset: 0.14em;
+      }
+
+      .manifest a:hover,
+      .manifest a:focus-visible {
+        color: var(--cyan);
+        text-decoration: underline;
       }
 
       @keyframes logoBoot {
@@ -277,9 +323,22 @@
       @keyframes microReveal {
         0% {
           opacity: 0;
+          transform: translateY(3px);
         }
         100% {
           opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes manifestReveal {
+        0% {
+          opacity: 0;
+          transform: translateY(4px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
         }
       }
 
@@ -372,11 +431,13 @@
         .edge-flash,
         .logo,
         .subheading,
+        .manifest,
         .micro {
           animation: none !important;
         }
 
         .subheading,
+        .manifest,
         .micro {
           opacity: 1;
         }
@@ -398,6 +459,26 @@
             -4px 0 var(--cyan),
             4px 0 var(--pink);
         }
+
+        .manifest {
+          width: min(90vw, 420px);
+          bottom: 6.2rem;
+          font-size: 0.69rem;
+          letter-spacing: 0.08em;
+          line-height: 1.62;
+        }
+
+        .manifest p + p {
+          margin-top: 0.62rem;
+        }
+
+        .micro {
+          bottom: 1.5rem;
+        }
+
+        .core-copy {
+          transform: translateY(-2.6vh);
+        }
       }
     </style>
   </head>
@@ -405,8 +486,18 @@
     <div class="edge-flash edge-flash--left" aria-hidden="true"></div>
     <div class="edge-flash edge-flash--right" aria-hidden="true"></div>
     <main class="shell" aria-label="z21 coming soon landing page">
-      <h1 class="logo" aria-label="z21">z21</h1>
-      <p class="subheading">Zero to one.</p>
+      <div class="core-copy">
+        <h1 class="logo" aria-label="z21">z21</h1>
+        <p class="subheading">Zero to one.</p>
+      </div>
+      <div class="manifest" aria-label="z21 build signal">
+        <p>building the apps you'll use tomorrow.</p>
+        <p>zero to one, fast. high-velocity product lab. we ship, iterate, and scale.</p>
+        <p>
+          not an agency. we build our own. but if you've got something worth building,
+          <a href="mailto:hey@z21.pro">lmk</a>.
+        </p>
+      </div>
       <small class="micro">z21 -- from zero to one</small>
     </main>
     <script>
