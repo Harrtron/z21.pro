@@ -297,6 +297,21 @@
           opacity: 1;
         }
       }
+
+      @media (max-width: 640px) {
+        .shell {
+          width: 100vw;
+          padding-inline: 0.9rem;
+        }
+
+        .logo {
+          font-size: clamp(5.5rem, 33vw, 8.2rem);
+          text-shadow:
+            -4px 0 var(--cyan),
+            4px 0 var(--pink);
+          transform: skewX(-6deg);
+        }
+      }
     </style>
   </head>
   <body>
