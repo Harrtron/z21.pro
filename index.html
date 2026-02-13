@@ -125,6 +125,44 @@
         animation: noiseDrift 5.8s steps(10, end) infinite;
       }
 
+      .edge-flash {
+        position: fixed;
+        top: 0;
+        width: 80px;
+        height: 100vh;
+        pointer-events: none;
+        z-index: 0;
+        opacity: 0;
+        mix-blend-mode: screen;
+        animation: none;
+      }
+
+      .edge-flash--left {
+        left: 0;
+        background:
+          radial-gradient(100% 70% at 0% 50%, rgba(0, 160, 255, 0.2) 0%, rgba(0, 160, 255, 0) 100%),
+          linear-gradient(
+            to bottom,
+            rgba(0, 160, 255, 0) 0%,
+            rgba(0, 160, 255, 0.18) 46%,
+            rgba(0, 160, 255, 0.12) 54%,
+            rgba(0, 160, 255, 0) 100%
+          );
+      }
+
+      .edge-flash--right {
+        right: 0;
+        background:
+          radial-gradient(100% 70% at 100% 50%, rgba(255, 32, 112, 0.2) 0%, rgba(255, 32, 112, 0) 100%),
+          linear-gradient(
+            to bottom,
+            rgba(255, 32, 112, 0) 0%,
+            rgba(255, 32, 112, 0.18) 46%,
+            rgba(255, 32, 112, 0.12) 54%,
+            rgba(255, 32, 112, 0) 100%
+          );
+      }
+
       .shell {
         position: relative;
         z-index: 1;
@@ -311,9 +349,27 @@
         }
       }
 
+      @keyframes edgeFlash {
+        0% {
+          transform: translateY(-100vh);
+          opacity: 0;
+        }
+        15% {
+          opacity: 1;
+        }
+        85% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100vh);
+          opacity: 0;
+        }
+      }
+
       @media (prefers-reduced-motion: reduce) {
         body::before,
         body::after,
+        .edge-flash,
         .logo,
         .subheading,
         .micro {
@@ -332,6 +388,10 @@
           padding-inline: 0.9rem;
         }
 
+        .edge-flash {
+          width: 56px;
+        }
+
         .logo {
           font-size: clamp(5.5rem, 33vw, 8.2rem);
           text-shadow:
@@ -342,6 +402,8 @@
     </style>
   </head>
   <body>
+    <div class="edge-flash edge-flash--left" aria-hidden="true"></div>
+    <div class="edge-flash edge-flash--right" aria-hidden="true"></div>
     <main class="shell" aria-label="z21 coming soon landing page">
       <h1 class="logo" aria-label="z21">z21</h1>
       <p class="subheading">Zero to one.</p>
@@ -353,6 +415,7 @@
         const logo = document.querySelector(".logo");
         if (!logo) return;
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        const edgeFlashes = document.querySelectorAll(".edge-flash");
 
         const replayLogoGlitch = () => {
           logo.style.animation = "none";
@@ -367,6 +430,29 @@
             scheduleNextGlitch();
           }, nextDelayMs);
         };
+
+        const triggerEdgeFlash = (edgeEl) => {
+          edgeEl.style.animation = "none";
+          void edgeEl.offsetWidth;
+          edgeEl.style.animation = "edgeFlash 2.5s ease-in-out 1";
+        };
+
+        const scheduleEdgeFlash = (edgeEl) => {
+          const nextDelayMs = 10000 + Math.random() * 10000;
+          window.setTimeout(() => {
+            triggerEdgeFlash(edgeEl);
+            scheduleEdgeFlash(edgeEl);
+          }, nextDelayMs);
+        };
+
+        edgeFlashes.forEach((edgeEl) => {
+          edgeEl.addEventListener("animationend", (event) => {
+            if (event.animationName === "edgeFlash") {
+              edgeEl.style.animation = "none";
+            }
+          });
+          scheduleEdgeFlash(edgeEl);
+        });
 
         scheduleNextGlitch();
       });
