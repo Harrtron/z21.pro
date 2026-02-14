@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>opportunities | z21</title>
+    <meta name="description" content="Open roles at z21. Zero to one, fast." />
+    <meta property="og:title" content="opportunities | z21" />
+    <meta property="og:description" content="Open roles at z21. Zero to one, fast." />
+    <meta property="og:image" content="../assets/z21-logo-square.png" />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/png" href="../assets/z21-logo-icon-alt.png" />
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+      crossorigin="anonymous"
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@1,900&family=Space+Grotesk:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #07090d;
+        --fg: #ffffff;
+        --muted: #bfc7cf;
+        --micro: #5a6068;
+        --cyan: #00a0ff;
+        --pink: #ff2070;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        margin: 0;
+      }
+
+      html {
+        position: relative;
+        background: var(--bg);
+        min-height: 100vh;
+      }
+
+      html::before {
+        content: "";
+        position: fixed;
+        inset: -1% -1%;
+        pointer-events: none;
+        background:
+          linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0) 48%,
+            rgba(0, 160, 255, 0.12) 50%,
+            rgba(255, 32, 112, 0.11) 52%,
+            rgba(255, 255, 255, 0) 54%,
+            rgba(255, 255, 255, 0) 100%
+          );
+        mix-blend-mode: screen;
+        opacity: 0.24;
+        animation: glitchBand 7.2s linear infinite;
+        z-index: 0;
+      }
+
+      html::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(
+          ellipse at center,
+          rgba(0, 0, 0, 0) 42%,
+          rgba(0, 0, 0, 0.22) 74%,
+          rgba(0, 0, 0, 0.5) 100%
+        );
+        z-index: 0;
+      }
+
+      body {
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 4rem 1rem 3rem;
+        overflow-x: hidden;
+        background:
+          radial-gradient(circle at 30% 20%, rgba(0, 160, 255, 0.035), rgba(0, 0, 0, 0) 42%),
+          radial-gradient(circle at 70% 80%, rgba(255, 32, 112, 0.03), rgba(0, 0, 0, 0) 46%),
+          linear-gradient(to bottom, rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.24)),
+          var(--bg);
+        color: var(--fg);
+        font-family: "Space Grotesk", "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+      }
+
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        inset: -2% -2%;
+        pointer-events: none;
+      }
+
+      body::before {
+        background-image: repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.085) 0px,
+          rgba(255, 255, 255, 0.085) 1px,
+          rgba(0, 0, 0, 0) 1px,
+          rgba(0, 0, 0, 0) 3px
+        );
+        mix-blend-mode: screen;
+        opacity: 0.44;
+        animation: scanDrift 7.8s linear infinite;
+      }
+
+      body::after {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='0.85'/%3E%3C/svg%3E");
+        background-size: 140px 140px;
+        mix-blend-mode: screen;
+        opacity: 0.105;
+        animation: noiseDrift 5.8s steps(10, end) infinite;
+      }
+
+      .shell {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 760px;
+        opacity: 0;
+        animation: contentReveal 0.8s ease-out 0.3s forwards;
+      }
+
+      .back-link-top {
+        position: absolute;
+        top: 2rem;
+        left: 0;
+        z-index: 10;
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        font-size: 0.8125rem;
+        font-weight: 400;
+        letter-spacing: 0.08em;
+        text-transform: lowercase;
+        text-decoration: none;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(0, 160, 255, 0.15);
+        border-radius: 2px;
+        transition: all 0.2s ease;
+        opacity: 0;
+        animation: backLinkReveal 0.6s ease-out 0.6s forwards;
+      }
+
+      .back-link-top:hover,
+      .back-link-top:focus-visible {
+        color: var(--fg);
+        background: rgba(0, 160, 255, 0.05);
+        border-color: var(--cyan);
+        text-shadow:
+          -0.5px 0 rgba(0, 160, 255, 0.4),
+          0.5px 0 rgba(255, 32, 112, 0.4);
+      }
+
+      .header {
+        margin-bottom: 2.5rem;
+        text-align: center;
+      }
+
+      .logo {
+        margin: 0 0 0.9rem;
+        font-family: "Archivo", "Arial Black", sans-serif;
+        font-size: clamp(3.5rem, 10vw, 5rem);
+        font-weight: 900;
+        font-style: italic;
+        letter-spacing: -0.03em;
+        line-height: 0.9;
+        color: var(--fg);
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.92);
+        text-transform: lowercase;
+        text-shadow:
+          -4px 0 var(--cyan),
+          4px 0 var(--pink);
+        animation: logoBoot 0.35s steps(4, jump-none) 1 both;
+      }
+
+      .page-title {
+        margin: 0;
+        font-size: clamp(1rem, 2.4vw, 1.25rem);
+        font-weight: 300;
+        letter-spacing: 0.12em;
+        text-transform: lowercase;
+        color: var(--muted);
+        text-shadow:
+          -0.5px 0 rgba(0, 160, 255, 0.22),
+          0.5px 0 rgba(255, 32, 112, 0.22);
+      }
+
+      .divider {
+        margin: 2rem 0;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(0, 160, 255, 0) 0%,
+          rgba(0, 160, 255, 0.3) 20%,
+          rgba(255, 32, 112, 0.3) 80%,
+          rgba(255, 32, 112, 0) 100%
+        );
+        opacity: 0.4;
+      }
+
+      .roles-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 1rem;
+      }
+
+      .role-card {
+        display: block;
+        padding: 1.2rem 1.25rem;
+        text-decoration: none;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(0, 160, 255, 0.16);
+        border-radius: 2px;
+        transition: all 0.2s ease;
+      }
+
+      .role-card:hover,
+      .role-card:focus-visible {
+        color: var(--fg);
+        background: rgba(0, 160, 255, 0.05);
+        border-color: var(--cyan);
+        transform: translateY(-1px);
+      }
+
+      .role-name {
+        margin: 0 0 0.4rem;
+        font-size: 1rem;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        text-transform: lowercase;
+        color: inherit;
+      }
+
+      .role-meta {
+        margin: 0;
+        font-size: 0.84rem;
+        font-weight: 300;
+        letter-spacing: 0.07em;
+        text-transform: lowercase;
+        color: var(--micro);
+      }
+
+      .role-card:hover .role-meta,
+      .role-card:focus-visible .role-meta {
+        color: var(--muted);
+      }
+
+      @keyframes backLinkReveal {
+        0% {
+          opacity: 0;
+          transform: translateX(-8px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes logoBoot {
+        0% {
+          text-shadow:
+            -20px 0 var(--cyan),
+            20px 0 var(--pink);
+          transform: translate3d(0, 0, 0);
+          opacity: 1;
+        }
+        100% {
+          text-shadow:
+            -4px 0 var(--cyan),
+            4px 0 var(--pink);
+          transform: translate3d(0, 0, 0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes contentReveal {
+        0% {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes scanDrift {
+        0% {
+          transform: translate3d(0, 0, 0);
+          background-position: 0 0;
+        }
+        100% {
+          transform: translate3d(0.25%, -0.2%, 0);
+          background-position: 0 22px;
+        }
+      }
+
+      @keyframes noiseDrift {
+        0% {
+          transform: translate3d(0, 0, 0);
+          background-position: 0 0;
+        }
+        100% {
+          transform: translate3d(-0.7%, 0.45%, 0);
+          background-position: 35px -28px;
+        }
+      }
+
+      @keyframes glitchBand {
+        0% {
+          transform: translateY(-110%);
+          opacity: 0.06;
+        }
+        100% {
+          transform: translateY(108%);
+          opacity: 0.06;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        body::before,
+        body::after,
+        html::before,
+        .logo,
+        .shell,
+        .back-link-top {
+          animation: none !important;
+        }
+
+        .shell,
+        .back-link-top {
+          opacity: 1;
+        }
+
+        .role-card {
+          transition: none;
+        }
+      }
+
+      @media (max-width: 640px) {
+        body {
+          padding: 2.5rem 1.25rem 2rem;
+        }
+
+        .header {
+          margin-bottom: 2rem;
+        }
+
+        .logo {
+          font-size: clamp(2.5rem, 18vw, 4rem);
+          text-shadow:
+            -3px 0 var(--cyan),
+            3px 0 var(--pink);
+        }
+
+        .page-title {
+          font-size: 0.875rem;
+          letter-spacing: 0.1em;
+        }
+
+        .role-name {
+          font-size: 0.925rem;
+        }
+
+        .role-meta {
+          font-size: 0.78rem;
+        }
+
+        .back-link-top {
+          top: 1.5rem;
+          padding: 0.5rem 0.875rem;
+          font-size: 0.75rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <a href="../index.html" class="back-link-top">&larr; back</a>
+
+      <header class="header">
+        <h1 class="logo">z21</h1>
+        <p class="page-title">opportunities</p>
+      </header>
+
+      <div class="divider"></div>
+
+      <ul class="roles-list" aria-label="open roles">
+        <li>
+          <a href="./organic-growth.html" class="role-card">
+            <h2 class="role-name">organic growth associate - flexible side hustle (uk)</h2>
+            <p class="role-meta">organic distribution, short-form content, outcome-based</p>
+          </a>
+        </li>
+      </ul>
+    </main>
+
+    <script>
+      window.addEventListener("load", () => {
+        const logo = document.querySelector(".logo");
+        if (!logo) return;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+        const replayLogoGlitch = () => {
+          logo.style.animation = "none";
+          void logo.offsetWidth;
+          logo.style.animation = "logoBoot 0.35s steps(4, jump-none) 1 both";
+        };
+
+        const scheduleNextGlitch = () => {
+          const nextDelayMs = 4000 + Math.random() * 6000;
+          window.setTimeout(() => {
+            replayLogoGlitch();
+            scheduleNextGlitch();
+          }, nextDelayMs);
+        };
+
+        scheduleNextGlitch();
+      });
+    </script>
+  </body>
+</html>
