@@ -1,0 +1,16 @@
+{
+  "name": "z21-gif-export",
+  "version": "1.0.0",
+  "description": "Export z21 logo animation as animated GIF",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "capture": "node capture-frames.mjs",
+    "assemble": "python3 assemble-gif.py",
+    "build": "npm run capture && npm run assemble && npm run assemble:2x",
+    "assemble:2x": "python3 assemble-gif.py ../../assets/z21-logo-animated-2x.gif 1200 800"
+  },
+  "dependencies": {
+    "puppeteer-core": "^24.0.0"
+  }
+}
