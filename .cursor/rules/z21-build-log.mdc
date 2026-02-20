@@ -1,0 +1,148 @@
+---
+description: z21 build log conventions and device mockup treatment
+globs:
+  - log/**
+alwaysApply: false
+---
+
+# z21 build log rules
+
+Build log posts are project announcements and opinion pieces written in the z21 voice. They are not blog posts.
+
+## Stack
+
+- Plain HTML, CSS, and vanilla JavaScript only.
+- No frameworks, build tools, or dependencies.
+- Static files deployable to GitHub Pages.
+
+## Voice & content
+
+- Lowercase everywhere. No title case, no sentence case.
+- Terse. Say it in fewer words.
+- Mystery over explanation. Don't over-sell.
+- z21 is a product lab, not an agency. The tone is technical and intentional.
+
+## File structure
+
+Each post lives in its own directory under `log/`:
+
+```text
+log/
+  index.html                -- listing page (newest first)
+  001-nudge/
+    index.html              -- post
+    assets/                 -- raw screenshots and images for this post
+  002-next-thing/
+    index.html
+    assets/
+```
+
+- Number posts with zero-padded prefixes (`001`, `002`, etc.).
+- Store images in the post's own `assets/` directory, not the root `assets/`.
+- Name image files in lowercase kebab-case.
+
+## Page structure
+
+Every post page follows the same shell as other z21 sub-pages:
+
+1. Back link (top-left, links to `/log/`)
+2. Header: z21 logo (linked to `/`), post title, date
+3. Divider
+4. Article content (`.content` block)
+5. Back link (bottom, links to `/log/`)
+6. Logo glitch replay script
+
+## Device mockup treatment
+
+Product screenshots are always presented inside the `.device-frame` CSS component. Never show raw screenshots inline.
+
+### Scroll-stage layout (primary pattern for product posts)
+
+For posts with multiple screenshots, use the scroll-linked companion layout. This creates a two-column editorial experience on desktop where a sticky device cross-fades screenshots as the reader scrolls.
+
+```html
+<div class="scroll-stage">
+  <div class="scroll-text">
+    <section data-screen="screen-1">
+      <h2>section heading</h2>
+      <p>text content...</p>
+      <div class="device-inline">
+        <div class="device-frame">
+          <img src="assets/screen-1.png" alt="description" />
+        </div>
+      </div>
+    </section>
+    <section data-screen="screen-2">
+      <h2>next heading</h2>
+      <p>more text...</p>
+      <div class="device-inline">
+        <div class="device-frame">
+          <img src="assets/screen-2.png" alt="description" />
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="scroll-device">
+    <div class="device-frame">
+      <div class="device-screen">
+        <img data-id="screen-1" src="assets/screen-1.png" class="active" alt="..." />
+        <img data-id="screen-2" src="assets/screen-2.png" alt="..." />
+      </div>
+    </div>
+  </div>
+</div>
+```
+
+Key points:
+
+- `data-screen` on each `<section>` maps to `data-id` on the stacked images
+- The first image should have class `active` (initial state)
+- `.device-inline` blocks are hidden on desktop, shown on mobile
+- IntersectionObserver JS handles the cross-fade and transform changes
+- Each section should define a transform in the `transforms` JS object
+
+### Multi-mockup spread (closer / standalone)
+
+```html
+<div class="device-grid">
+  <div class="device-frame">
+    <img src="assets/screen-1.png" alt="first screen" />
+  </div>
+  <div class="device-frame">
+    <img src="assets/screen-2.png" alt="second screen" />
+  </div>
+  <div class="device-frame">
+    <img src="assets/screen-3.png" alt="third screen" />
+  </div>
+</div>
+```
+
+Use this for the dramatic "full spread" closer at the end of a post, or standalone when the scroll-stage pattern isn't needed.
+
+### Desktop vs mobile behavior
+
+- **Desktop (>640px)**: Two-column grid. Sticky device on the right cross-fades screenshots and subtly rotates as the reader scrolls through sections.
+- **Mobile (<=640px)**: Single column. Sticky device is hidden. Each section's `.device-inline` is shown instead, animating in as the user scrolls to it.
+
+### Why this matters
+
+Product brands (like Nudge) may have their own aesthetic that conflicts with z21's dark/techy identity. The device frame contains the product's brand inside a screen while the presentation stays z21 — dark, glitchy, chromatic aberration.
+
+## Adding a new post
+
+1. Create `log/NNN-slug/index.html` and `log/NNN-slug/assets/`.
+2. Copy the structure from an existing post (e.g. `001-nudge`).
+3. Add a new card to `log/index.html` at the top of the `.posts-list` (newest first).
+4. For product posts with screenshots, use the scroll-stage layout pattern.
+5. Add a `transforms` entry in the JS for each `data-screen` section.
+
+## Shared CSS patterns
+
+All pages reuse the z21 design system verbatim (copy-paste, no shared CSS file):
+
+- CSS variables: `--bg`, `--fg`, `--muted`, `--micro`, `--cyan`, `--pink`
+- Background effects: scan lines, noise, glitch band, vignette, radial gradients
+- Logo boot animation + periodic glitch replay
+- Content reveal animations
+- `prefers-reduced-motion: reduce` support
+- Mobile breakpoint at `640px`

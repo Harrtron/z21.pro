@@ -1,0 +1,1191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>001 — nudge | z21 build log</title>
+    <meta name="description" content="project 001. a couples app. built to reduce friction between two people who care about each other — but are busy." />
+    <meta property="og:title" content="001 — nudge | z21 build log" />
+    <meta property="og:description" content="project 001. a couples app. built to reduce friction between two people who care about each other — but are busy." />
+    <meta property="og:image" content="../../assets/z21-logo-square.png" />
+    <meta property="og:type" content="article" />
+    <link rel="icon" type="image/png" href="../../assets/z21-logo-icon-alt.png" />
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com"
+      crossorigin="anonymous"
+    />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:ital,wght@1,900&family=Space+Grotesk:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #07090d;
+        --fg: #ffffff;
+        --muted: #bfc7cf;
+        --micro: #5a6068;
+        --cyan: #00a0ff;
+        --pink: #ff2070;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        margin: 0;
+      }
+
+      html {
+        position: relative;
+        background: var(--bg);
+        min-height: 100vh;
+      }
+
+      html::before {
+        content: "";
+        position: fixed;
+        inset: -1% -1%;
+        pointer-events: none;
+        background:
+          linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0) 48%,
+            rgba(0, 160, 255, 0.12) 50%,
+            rgba(255, 32, 112, 0.11) 52%,
+            rgba(255, 255, 255, 0) 54%,
+            rgba(255, 255, 255, 0) 100%
+          );
+        mix-blend-mode: screen;
+        opacity: 0.24;
+        animation: glitchBand 7.2s linear infinite;
+        z-index: 0;
+      }
+
+      html::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(
+          ellipse at center,
+          rgba(0, 0, 0, 0) 42%,
+          rgba(0, 0, 0, 0.22) 74%,
+          rgba(0, 0, 0, 0.5) 100%
+        );
+        z-index: 0;
+      }
+
+      body {
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 4rem 1rem 3rem;
+        overflow-x: hidden;
+        background:
+          radial-gradient(circle at 30% 20%, rgba(0, 160, 255, 0.035), rgba(0, 0, 0, 0) 42%),
+          radial-gradient(circle at 70% 80%, rgba(255, 32, 112, 0.03), rgba(0, 0, 0, 0) 46%),
+          linear-gradient(to bottom, rgba(0, 0, 0, 0.16), rgba(0, 0, 0, 0.24)),
+          var(--bg);
+        color: var(--fg);
+        font-family: "Space Grotesk", "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+      }
+
+      body::before,
+      body::after {
+        content: "";
+        position: fixed;
+        inset: -2% -2%;
+        pointer-events: none;
+      }
+
+      body::before {
+        background-image: repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.085) 0px,
+          rgba(255, 255, 255, 0.085) 1px,
+          rgba(0, 0, 0, 0) 1px,
+          rgba(0, 0, 0, 0) 3px
+        );
+        mix-blend-mode: screen;
+        opacity: 0.44;
+        animation: scanDrift 7.8s linear infinite;
+      }
+
+      body::after {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='0.85'/%3E%3C/svg%3E");
+        background-size: 140px 140px;
+        mix-blend-mode: screen;
+        opacity: 0.105;
+        animation: noiseDrift 5.8s steps(10, end) infinite;
+      }
+
+      /* ── shell & header ── */
+
+      .shell {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        max-width: 960px;
+        opacity: 0;
+        animation: contentReveal 0.8s ease-out 0.3s forwards;
+      }
+
+      .header {
+        margin-bottom: 3rem;
+        text-align: center;
+      }
+
+      .logo {
+        margin: 0 0 1rem;
+        font-family: "Archivo", "Arial Black", sans-serif;
+        font-size: clamp(3.5rem, 10vw, 5rem);
+        font-weight: 900;
+        font-style: italic;
+        letter-spacing: -0.03em;
+        line-height: 0.9;
+        color: var(--fg);
+        -webkit-text-stroke: 1px rgba(255, 255, 255, 0.92);
+        text-transform: lowercase;
+        text-shadow:
+          -4px 0 var(--cyan),
+          4px 0 var(--pink);
+        animation: logoBoot 0.35s steps(4, jump-none) 1 both;
+      }
+
+      .logo a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .post-title {
+        margin: 0;
+        font-size: clamp(1rem, 2.4vw, 1.25rem);
+        font-weight: 300;
+        letter-spacing: 0.12em;
+        text-transform: lowercase;
+        color: var(--muted);
+        text-shadow:
+          -0.5px 0 rgba(0, 160, 255, 0.22),
+          0.5px 0 rgba(255, 32, 112, 0.22);
+      }
+
+      .post-date {
+        margin: 0.5rem 0 0;
+        font-size: 0.75rem;
+        font-weight: 300;
+        letter-spacing: 0.1em;
+        text-transform: lowercase;
+        color: var(--micro);
+      }
+
+      .divider {
+        margin: 2.5rem 0;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(0, 160, 255, 0) 0%,
+          rgba(0, 160, 255, 0.3) 20%,
+          rgba(255, 32, 112, 0.3) 80%,
+          rgba(255, 32, 112, 0) 100%
+        );
+        opacity: 0.4;
+      }
+
+      /* ── article content ── */
+
+      .content {
+        font-size: 0.9375rem;
+        font-weight: 300;
+        line-height: 1.72;
+        color: var(--muted);
+        letter-spacing: 0.01em;
+      }
+
+      .content h2 {
+        margin: 2.5rem 0 1rem;
+        font-size: 1.125rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-transform: lowercase;
+        color: var(--fg);
+        text-shadow:
+          -1px 0 rgba(0, 160, 255, 0.3),
+          1px 0 rgba(255, 32, 112, 0.3);
+      }
+
+      .content section:first-child h2 {
+        margin-top: 0;
+      }
+
+      .content p {
+        margin: 0 0 1.25rem;
+      }
+
+      .content ul {
+        margin: 1rem 0 1.5rem;
+        padding-left: 1.5rem;
+        list-style: none;
+      }
+
+      .content ul li {
+        position: relative;
+        margin-bottom: 0.75rem;
+        padding-left: 0.5rem;
+      }
+
+      .content ul li::before {
+        content: "–";
+        position: absolute;
+        left: -1rem;
+        color: var(--cyan);
+        opacity: 0.6;
+      }
+
+      .content strong {
+        font-weight: 400;
+        color: var(--fg);
+      }
+
+      /* ── download buttons ── */
+
+      .download-buttons {
+        display: flex;
+        gap: 0.75rem;
+        margin: 2rem 0 1rem;
+        flex-wrap: wrap;
+      }
+
+      .download-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.7rem 1.25rem;
+        font-size: 0.8125rem;
+        font-weight: 400;
+        letter-spacing: 0.08em;
+        text-transform: lowercase;
+        text-decoration: none;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(0, 160, 255, 0.2);
+        border-radius: 2px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+
+      .download-btn:hover,
+      .download-btn:focus-visible {
+        color: var(--fg);
+        background: rgba(0, 160, 255, 0.05);
+        border-color: var(--cyan);
+        text-shadow:
+          -0.5px 0 rgba(0, 160, 255, 0.4),
+          0.5px 0 rgba(255, 32, 112, 0.4);
+      }
+
+      .download-btn svg {
+        flex-shrink: 0;
+      }
+
+      .download-btn--disabled {
+        color: var(--micro);
+        border-color: rgba(255, 255, 255, 0.06);
+        cursor: default;
+        pointer-events: none;
+      }
+
+      /* ── scroll-stage: two-column editorial layout ── */
+
+      .scroll-stage {
+        display: grid;
+        grid-template-columns: 1fr 0.75fr;
+        gap: 3rem;
+        align-items: start;
+      }
+
+      .scroll-text section {
+        min-height: 60vh;
+        padding-bottom: 2rem;
+      }
+
+      .scroll-text section.closer-intro {
+        min-height: 30vh;
+      }
+
+      /* ── sticky device (desktop) ── */
+
+      .scroll-device {
+        position: sticky;
+        top: 12vh;
+        display: flex;
+        justify-content: center;
+        perspective: 1200px;
+        align-self: start;
+        padding: 2rem 0;
+      }
+
+      .scroll-device .device-frame {
+        position: relative;
+        background: #111118;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 32px;
+        padding: 12px;
+        width: 100%;
+        max-width: 280px;
+        box-shadow:
+          -8px 0 24px -4px rgba(0, 160, 255, 0.12),
+          8px 0 24px -4px rgba(255, 32, 112, 0.12),
+          0 8px 32px rgba(0, 0, 0, 0.4);
+        transform: rotateY(-8deg) rotateX(4deg);
+        transition: box-shadow 0.15s ease, filter 0.15s ease;
+        opacity: 0;
+        animation: deviceReveal 0.8s ease-out 0.6s forwards,
+                   deviceFloat 4s ease-in-out 1.5s infinite;
+      }
+
+      .scroll-device .device-frame.device-glitch {
+        box-shadow:
+          -14px 0 28px -4px rgba(0, 160, 255, 0.25),
+          14px 0 28px -4px rgba(255, 32, 112, 0.25),
+          0 8px 32px rgba(0, 0, 0, 0.4);
+        filter: brightness(1.08);
+      }
+
+      .scroll-device .device-frame::before {
+        content: "";
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 64px;
+        height: 20px;
+        background: #0a0a10;
+        border-radius: 0 0 12px 12px;
+        z-index: 3;
+      }
+
+      .scroll-device .device-frame::after {
+        content: "";
+        position: absolute;
+        inset: 12px;
+        border-radius: 22px;
+        pointer-events: none;
+        z-index: 2;
+        background-image: repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.04) 0px,
+          rgba(255, 255, 255, 0.04) 1px,
+          rgba(0, 0, 0, 0) 1px,
+          rgba(0, 0, 0, 0) 3px
+        );
+        mix-blend-mode: screen;
+        opacity: 0.5;
+      }
+
+      .device-screen {
+        position: relative;
+        display: grid;
+        border-radius: 22px;
+        overflow: hidden;
+      }
+
+      .device-screen img {
+        grid-area: 1 / 1;
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 22px;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+      }
+
+      .device-screen img.active {
+        opacity: 1;
+      }
+
+      /* ── inline device (mobile) ── */
+
+      .device-inline {
+        display: none;
+      }
+
+      /* ── closer: full-width 3-device spread ── */
+
+      .closer {
+        margin-top: 1rem;
+      }
+
+      .device-grid {
+        margin: 3rem 0;
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        perspective: 1200px;
+        flex-wrap: wrap;
+      }
+
+      .device-grid .device-frame {
+        position: relative;
+        background: #111118;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 32px;
+        padding: 12px;
+        max-width: 200px;
+        width: 100%;
+        box-shadow:
+          -8px 0 24px -4px rgba(0, 160, 255, 0.12),
+          8px 0 24px -4px rgba(255, 32, 112, 0.12),
+          0 8px 32px rgba(0, 0, 0, 0.4);
+        transition: transform 0.4s ease;
+        opacity: 0;
+        animation: deviceReveal 0.8s ease-out forwards;
+      }
+
+      .device-grid .device-frame::before {
+        content: "";
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 64px;
+        height: 20px;
+        background: #0a0a10;
+        border-radius: 0 0 12px 12px;
+        z-index: 3;
+      }
+
+      .device-grid .device-frame::after {
+        content: "";
+        position: absolute;
+        inset: 12px;
+        border-radius: 22px;
+        pointer-events: none;
+        z-index: 2;
+        background-image: repeating-linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0.04) 0px,
+          rgba(255, 255, 255, 0.04) 1px,
+          rgba(0, 0, 0, 0) 1px,
+          rgba(0, 0, 0, 0) 3px
+        );
+        mix-blend-mode: screen;
+        opacity: 0.5;
+      }
+
+      .device-grid .device-frame img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 22px;
+      }
+
+      .device-grid .device-frame:nth-child(1) {
+        transform: rotateY(-12deg) rotateX(3deg) translateY(8px);
+        animation-delay: 0.5s;
+      }
+
+      .device-grid .device-frame:nth-child(2) {
+        transform: rotateY(-2deg) rotateX(2deg) translateY(-4px) scale(1.04);
+        animation-delay: 0.7s;
+        z-index: 1;
+      }
+
+      .device-grid .device-frame:nth-child(3) {
+        transform: rotateY(8deg) rotateX(3deg) translateY(12px);
+        animation-delay: 0.9s;
+      }
+
+      .device-grid .device-frame:hover {
+        transform: rotateY(0deg) rotateX(0deg) scale(1.06) translateY(-4px);
+        z-index: 2;
+      }
+
+      /* ── back links ── */
+
+      .back-link {
+        display: inline-block;
+        margin-top: 3rem;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.8125rem;
+        font-weight: 400;
+        letter-spacing: 0.1em;
+        text-transform: lowercase;
+        text-decoration: none;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(0, 160, 255, 0.2);
+        border-radius: 2px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+
+      .back-link:hover,
+      .back-link:focus-visible {
+        color: var(--fg);
+        background: rgba(0, 160, 255, 0.05);
+        border-color: var(--cyan);
+        text-shadow:
+          -0.5px 0 rgba(0, 160, 255, 0.4),
+          0.5px 0 rgba(255, 32, 112, 0.4);
+      }
+
+      .back-link-top {
+        position: absolute;
+        top: 2rem;
+        left: 0;
+        z-index: 10;
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+        font-size: 0.8125rem;
+        font-weight: 400;
+        letter-spacing: 0.08em;
+        text-transform: lowercase;
+        text-decoration: none;
+        color: var(--muted);
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(0, 160, 255, 0.15);
+        border-radius: 2px;
+        transition: all 0.2s ease;
+        opacity: 0;
+        animation: backLinkReveal 0.6s ease-out 0.6s forwards;
+        cursor: pointer;
+      }
+
+      .back-link-top:hover,
+      .back-link-top:focus-visible {
+        color: var(--fg);
+        background: rgba(0, 160, 255, 0.05);
+        border-color: var(--cyan);
+        text-shadow:
+          -0.5px 0 rgba(0, 160, 255, 0.4),
+          0.5px 0 rgba(255, 32, 112, 0.4);
+      }
+
+      /* ── animations ── */
+
+      @keyframes deviceReveal {
+        0% {
+          opacity: 0;
+          transform: rotateY(-16deg) rotateX(8deg) translateY(24px);
+        }
+        100% {
+          opacity: 1;
+          transform: rotateY(-8deg) rotateX(4deg) translateY(0);
+        }
+      }
+
+      @keyframes mobileDeviceReveal {
+        0% {
+          opacity: 0;
+          transform: rotateY(-12deg) rotateX(6deg) translateY(20px) scale(0.96);
+        }
+        100% {
+          opacity: 1;
+          transform: rotateY(-4deg) rotateX(2deg) translateY(0) scale(1);
+        }
+      }
+
+      @keyframes deviceFloat {
+        0%, 100% { translate: 0 0; }
+        50% { translate: 0 -4px; }
+      }
+
+      @keyframes backLinkReveal {
+        0% {
+          opacity: 0;
+          transform: translateX(-8px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes logoBoot {
+        0% {
+          text-shadow:
+            -20px 0 var(--cyan),
+            20px 0 var(--pink);
+          transform: translate3d(0, 0, 0);
+          opacity: 1;
+        }
+        15% {
+          text-shadow:
+            16px 1px var(--pink),
+            -16px -1px var(--cyan);
+          transform: translate3d(-3px, 1px, 0);
+          opacity: 0.82;
+        }
+        30% {
+          text-shadow:
+            -12px -1px var(--cyan),
+            12px 1px var(--pink);
+          transform: translate3d(2px, -1px, 0);
+          opacity: 0.94;
+        }
+        50% {
+          text-shadow:
+            6px 0 var(--pink),
+            -6px 0 var(--cyan);
+          transform: translate3d(-1px, 0, 0);
+          opacity: 0.7;
+        }
+        70% {
+          text-shadow:
+            -8px 1px var(--cyan),
+            8px -1px var(--pink);
+          transform: translate3d(1px, 0, 0);
+          opacity: 1;
+        }
+        100% {
+          text-shadow:
+            -4px 0 var(--cyan),
+            4px 0 var(--pink);
+          transform: translate3d(0, 0, 0);
+          opacity: 1;
+        }
+      }
+
+      @keyframes contentReveal {
+        0% {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes scanDrift {
+        0% {
+          transform: translate3d(0, 0, 0);
+          background-position: 0 0;
+        }
+        48% {
+          transform: translate3d(0.3%, -0.25%, 0);
+          background-position: 0 10px;
+        }
+        50% {
+          transform: translate3d(-0.35%, 0.2%, 0);
+          background-position: 0 11px;
+        }
+        100% {
+          transform: translate3d(0.25%, -0.2%, 0);
+          background-position: 0 22px;
+        }
+      }
+
+      @keyframes noiseDrift {
+        0% {
+          transform: translate3d(0, 0, 0);
+          background-position: 0 0;
+        }
+        100% {
+          transform: translate3d(-0.7%, 0.45%, 0);
+          background-position: 35px -28px;
+        }
+      }
+
+      @keyframes glitchBand {
+        0% {
+          transform: translateY(-110%);
+          opacity: 0.06;
+        }
+        12% {
+          opacity: 0.27;
+        }
+        18% {
+          opacity: 0.11;
+        }
+        38% {
+          transform: translateY(-18%);
+          opacity: 0.31;
+        }
+        56% {
+          opacity: 0.09;
+        }
+        100% {
+          transform: translateY(108%);
+          opacity: 0.06;
+        }
+      }
+
+      /* ── reduced motion ── */
+
+      @media (prefers-reduced-motion: reduce) {
+        body::before,
+        body::after,
+        html::before,
+        .logo,
+        .shell,
+        .back-link-top,
+        .device-frame,
+        .scroll-device .device-frame,
+        .device-inline .device-frame {
+          animation: none !important;
+        }
+
+        .shell,
+        .back-link-top {
+          opacity: 1;
+        }
+
+        .device-frame,
+        .scroll-device .device-frame,
+        .device-inline .device-frame {
+          opacity: 1;
+        }
+
+        .device-screen img {
+          transition: none;
+        }
+
+        .scroll-device .device-frame {
+          transition: none;
+        }
+
+        .back-link,
+        .device-grid .device-frame {
+          transition: none;
+        }
+      }
+
+      /* ── mobile ── */
+
+      @media (max-width: 640px) {
+        body {
+          padding: 2.5rem 1.25rem 2rem;
+        }
+
+        .shell {
+          max-width: 100%;
+        }
+
+        .header {
+          margin-bottom: 2rem;
+        }
+
+        .logo {
+          font-size: clamp(2.5rem, 18vw, 4rem);
+          text-shadow:
+            -3px 0 var(--cyan),
+            3px 0 var(--pink);
+        }
+
+        .post-title {
+          font-size: 0.875rem;
+          letter-spacing: 0.1em;
+        }
+
+        .divider {
+          margin: 1.75rem 0;
+        }
+
+        .content {
+          font-size: 0.875rem;
+          line-height: 1.68;
+        }
+
+        .content h2 {
+          margin: 2rem 0 0.875rem;
+          font-size: 1rem;
+        }
+
+        .content ul {
+          padding-left: 1.25rem;
+        }
+
+        .scroll-stage {
+          display: block;
+        }
+
+        .scroll-text section {
+          min-height: auto;
+          padding-bottom: 0;
+        }
+
+        .scroll-text section.closer-intro {
+          min-height: auto;
+        }
+
+        .download-buttons {
+          flex-direction: column;
+          gap: 0.5rem;
+        }
+
+        .download-btn {
+          font-size: 0.75rem;
+          padding: 0.625rem 1rem;
+          justify-content: center;
+        }
+
+        .scroll-device {
+          display: none;
+        }
+
+        .device-inline {
+          display: flex;
+          justify-content: center;
+          perspective: 1200px;
+          margin: 2rem 0 2.5rem;
+        }
+
+        .device-inline .device-frame {
+          position: relative;
+          background: #111118;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          border-radius: 24px;
+          padding: 8px;
+          width: 100%;
+          max-width: 240px;
+          box-shadow:
+            -6px 0 20px -4px rgba(0, 160, 255, 0.12),
+            6px 0 20px -4px rgba(255, 32, 112, 0.12),
+            0 6px 24px rgba(0, 0, 0, 0.4);
+          transform: rotateY(-4deg) rotateX(2deg);
+          opacity: 0;
+        }
+
+        .device-inline .device-frame.revealed {
+          animation: mobileDeviceReveal 0.8s ease-out forwards;
+        }
+
+        .device-inline .device-frame::before {
+          content: "";
+          position: absolute;
+          top: 6px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 48px;
+          height: 16px;
+          background: #0a0a10;
+          border-radius: 0 0 8px 8px;
+          z-index: 3;
+        }
+
+        .device-inline .device-frame::after {
+          content: "";
+          position: absolute;
+          inset: 8px;
+          border-radius: 18px;
+          pointer-events: none;
+          z-index: 2;
+          background-image: repeating-linear-gradient(
+            to bottom,
+            rgba(255, 255, 255, 0.04) 0px,
+            rgba(255, 255, 255, 0.04) 1px,
+            rgba(0, 0, 0, 0) 1px,
+            rgba(0, 0, 0, 0) 3px
+          );
+          mix-blend-mode: screen;
+          opacity: 0.5;
+        }
+
+        .device-inline .device-frame img {
+          display: block;
+          width: 100%;
+          height: auto;
+          border-radius: 18px;
+        }
+
+        .device-grid {
+          gap: 0.75rem;
+          margin: 2rem 0;
+        }
+
+        .device-grid .device-frame {
+          max-width: 150px;
+          border-radius: 20px;
+          padding: 6px;
+        }
+
+        .device-grid .device-frame::before {
+          width: 36px;
+          height: 12px;
+          top: 4px;
+          border-radius: 0 0 6px 6px;
+        }
+
+        .device-grid .device-frame::after {
+          inset: 6px;
+          border-radius: 15px;
+        }
+
+        .device-grid .device-frame img {
+          border-radius: 15px;
+        }
+
+        .device-grid .device-frame:nth-child(1) {
+          transform: rotateY(-6deg) rotateX(2deg) translateY(4px);
+        }
+
+        .device-grid .device-frame:nth-child(2) {
+          transform: rotateY(-1deg) rotateX(1deg) translateY(-2px) scale(1.02);
+        }
+
+        .device-grid .device-frame:nth-child(3) {
+          transform: rotateY(4deg) rotateX(2deg) translateY(6px);
+        }
+
+        .back-link-top {
+          top: 1.5rem;
+          padding: 0.5rem 0.875rem;
+          font-size: 0.75rem;
+        }
+
+        .back-link {
+          margin-top: 2rem;
+          padding: 0.625rem 1.25rem;
+          font-size: 0.75rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <a href="/log/" class="back-link-top">← build log</a>
+
+      <header class="header">
+        <h1 class="logo"><a href="/">z21</a></h1>
+        <p class="post-title">project 001 — nudge</p>
+        <p class="post-date">20 feb 2026</p>
+      </header>
+
+      <div class="divider"></div>
+
+      <article class="content">
+        <div class="scroll-stage">
+          <div class="scroll-text">
+
+            <section data-screen="home">
+              <h2>project 001 — nudge</h2>
+              <p>
+                a couples app. not a reminder app.
+              </p>
+              <p>
+                built to reduce friction between two people who care about each other — but are busy.
+              </p>
+              <p>
+                this is the first product shipped under z21. from zero to live on the app store.
+              </p>
+
+              <h2>the problem</h2>
+              <p>most relationship tension isn't dramatic.</p>
+              <p>it's repetitive.</p>
+              <ul>
+                <li>small requests left unacknowledged</li>
+                <li>missed appreciation</li>
+                <li>things left unsaid</li>
+              </ul>
+              <p>not because people don't care. because attention is finite.</p>
+              <p>over time, that compounds.</p>
+              <p>
+                nudge is built around a simple idea: make small acts visible.
+                make appreciation easy. reduce the friction loop.
+              </p>
+
+              <div class="device-inline">
+                <div class="device-frame">
+                  <img src="assets/home.png" alt="nudge home screen showing daily nudge and task queue" />
+                </div>
+              </div>
+            </section>
+
+            <section data-screen="scribbles">
+              <h2>how it works</h2>
+              <p>
+                one partner adds something they need help with.
+                the other completes it. it's marked done in a satisfying way.
+                appreciation is sent.
+              </p>
+              <p>that's the core loop.</p>
+              <p>no guilt metrics. no points scoring.</p>
+              <p>just action → recognition → momentum.</p>
+              <p>around that loop we've added:</p>
+              <ul>
+                <li>check-ins — structured emotional signals without heavy conversations</li>
+                <li>love notes — prompted appreciation that lands at the right time</li>
+                <li>treats — lightweight rewards that feel intentional</li>
+                <li>moments — small prompts to interrupt drift</li>
+              </ul>
+              <p>
+                each feature exists to reinforce the same outcome:
+                stay aligned. stay connected. without turning it into work.
+              </p>
+
+              <div class="device-inline">
+                <div class="device-frame">
+                  <img src="assets/scribbles.png" alt="nudge scribbles screen with hand-drawn completions" />
+                </div>
+              </div>
+            </section>
+
+            <section data-screen="claimed-reward">
+              <h2>who it's for</h2>
+              <p>not couples in crisis.</p>
+              <p>couples in motion.</p>
+              <p>
+                two people juggling jobs, life, responsibilities —
+                who don't want connection to fade into background noise.
+              </p>
+
+              <div class="device-inline">
+                <div class="device-frame">
+                  <img src="assets/claimed-reward.png" alt="nudge reward claiming and sharing screen" />
+                </div>
+              </div>
+
+              <div class="download-buttons">
+                <a href="https://apps.apple.com/gb/app/nudge-couples-to-do-list/id6758520512" class="download-btn" target="_blank" rel="noopener">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+                  <span>download for ios</span>
+                </a>
+                <span class="download-btn download-btn--disabled">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.523 2c-.587.009-1.27.266-1.82.592-.49.292-.915.7-1.18 1.176-.267.477-.422 1.01-.39 1.605.63.02 1.263-.217 1.758-.533.497-.318.914-.724 1.164-1.195.25-.473.41-.98.468-1.645zM20.94 17.672c-.26.58-.39.84-.728 1.352-.474.717-1.14 1.61-1.97 1.618-.735.01-1.24-.64-2.56-.63-1.32.01-1.87.64-2.607.63-.83-.01-1.46-.82-1.935-1.535-1.326-2.005-1.46-4.357-.645-5.608.58-.886 1.496-1.404 2.358-1.404.877 0 1.43.64 2.155.64.706 0 1.136-.642 2.154-.642.766 0 1.583.417 2.163 1.137-1.9 1.04-1.593 3.755.395 4.638zM3.29 22V2h3.2l2.35 6.09L10.5 2h3.2v20h-3v-11.5L8.84 17H7.08L5.28 10.5V22H3.29z"/></svg>
+                  <span>android — coming soon</span>
+                </span>
+              </div>
+            </section>
+
+            <section class="closer-intro">
+              <div class="divider"></div>
+              <h2>scope</h2>
+              <p>three core screens. one primary loop. intentionally simple.</p>
+              <p>this is v1.</p>
+            </section>
+
+          </div>
+
+          <div class="scroll-device">
+            <div class="device-frame">
+              <div class="device-screen">
+                <img data-id="home" src="assets/home.png" alt="nudge home screen" class="active" />
+                <img data-id="scribbles" src="assets/scribbles.png" alt="nudge scribbles screen" />
+                <img data-id="claimed-reward" src="assets/claimed-reward.png" alt="nudge reward screen" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="closer">
+          <div class="device-grid">
+            <div class="device-frame">
+              <img src="assets/home.png" alt="nudge home screen" />
+            </div>
+            <div class="device-frame">
+              <img src="assets/scribbles.png" alt="nudge scribbles screen" />
+            </div>
+            <div class="device-frame">
+              <img src="assets/claimed-reward.png" alt="nudge reward screen" />
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <a href="/log/" class="back-link">← back to build log</a>
+    </main>
+
+    <script>
+      window.addEventListener("load", () => {
+        const logo = document.querySelector(".logo");
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        if (logo && !reduceMotion) {
+          const replayLogoGlitch = () => {
+            logo.style.animation = "none";
+            void logo.offsetWidth;
+            logo.style.animation = "logoBoot 0.35s steps(4, jump-none) 1 both";
+          };
+          const scheduleNextGlitch = () => {
+            window.setTimeout(() => {
+              replayLogoGlitch();
+              scheduleNextGlitch();
+            }, 4000 + Math.random() * 6000);
+          };
+          scheduleNextGlitch();
+        }
+
+        const stickyFrame = document.querySelector(".scroll-device .device-frame");
+        const screenImgs = document.querySelectorAll(".scroll-device .device-screen img");
+        const sections = document.querySelectorAll(".scroll-text [data-screen]");
+        const scrollStage = document.querySelector(".scroll-stage");
+
+        if (stickyFrame && sections.length && scrollStage) {
+          let glitchTimeout = null;
+
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              const screenId = entry.target.getAttribute("data-screen");
+
+              screenImgs.forEach((img) => {
+                img.classList.toggle("active", img.getAttribute("data-id") === screenId);
+              });
+
+              if (!reduceMotion) {
+                stickyFrame.classList.add("device-glitch");
+                clearTimeout(glitchTimeout);
+                glitchTimeout = setTimeout(() => {
+                  stickyFrame.classList.remove("device-glitch");
+                }, 300);
+              }
+            });
+          }, {
+            rootMargin: "-30% 0px -30% 0px",
+            threshold: 0
+          });
+
+          sections.forEach((section) => observer.observe(section));
+
+          if (!reduceMotion) {
+            let ticking = false;
+            const onScroll = () => {
+              if (ticking) return;
+              ticking = true;
+              requestAnimationFrame(() => {
+                const rect = scrollStage.getBoundingClientRect();
+                const progress = -rect.top / (rect.height - window.innerHeight);
+                const t = Math.max(0, Math.min(1, progress));
+
+                const rotateY = -8 + t * 16;
+                const rotateX = 4 - t * 2;
+                const translateY = t * -6;
+
+                stickyFrame.style.transform =
+                  `rotateY(${rotateY}deg) rotateX(${rotateX}deg) translateY(${translateY}px)`;
+                ticking = false;
+              });
+            };
+
+            window.addEventListener("scroll", onScroll, { passive: true });
+            onScroll();
+          }
+        }
+
+        const inlineFrames = document.querySelectorAll(".device-inline .device-frame");
+        if (inlineFrames.length) {
+          const inlineObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("revealed");
+                inlineObserver.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.2 });
+
+          inlineFrames.forEach((frame) => inlineObserver.observe(frame));
+        }
+      });
+    </script>
+  </body>
+</html>
