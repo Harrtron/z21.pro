@@ -12,7 +12,7 @@ A brand identity guide for z21 — a high-velocity product lab. Dark-first, mini
 - **Short form:** zero to one
 - **Voice:** Mystery and intent over explanation. No long marketing copy.
 - **Writing style:** lowercase everywhere.
-- **Positioning:** Not an agency — we build our own. High-velocity product lab that ships, iterates, and scales.
+- **Positioning:** High-velocity product and technology partner. z21 builds from zero to one, fast — and delivers that same rapid progress for other businesses. It also ships its own.
 
 ---
 

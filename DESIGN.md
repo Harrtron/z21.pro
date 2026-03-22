@@ -113,9 +113,10 @@ The defining visual motif. Two offset colour layers (cyan-blue left, hot-pink ri
 
 - **Primary copy**: `Zero to one.`
 - **Optional alternate copy**: `Zero → One.` or `From zero to one.`
-- **Micro detail (optional)**: `z21 -- product velocity.`
+- **Micro detail (optional)**: `z21 -- zero to one, fast.`
 - **Voice**: Minimal, controlled, and intentionally under-explained.
 - **Rule**: Mystery over explanation.
+- **Positioning**: z21 builds from zero to one, fast — and delivers that same velocity for other businesses. High-velocity product and technology partner.
 
 ---
 
